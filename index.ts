@@ -1,12 +1,14 @@
-import * as Discord from 'discord.js';
+import { Client, Message } from 'discord.js';
 import * as config from './config.json';
-const client = new Discord.Client();
+import { reactMessage } from './reacts';
+
+const client = new Client();
 
 client.once('ready', () => {
     console.log('bot is running');
 });
 
-client.on('message', (message : Discord.Message) : void => {
+client.on('message', (message : Message) : void => {
     if (message.author.bot) return;
 
     const content: string = message.content;
@@ -26,9 +28,7 @@ client.on('message', (message : Discord.Message) : void => {
         }
     }
 
-    if (content.toLowerCase().search('catthink') !== -1) {
-        message.channel.send('<:catthink:701386574251950141>');
-    }
+    reactMessage(message);
 });
 
 client.login(config.token);
