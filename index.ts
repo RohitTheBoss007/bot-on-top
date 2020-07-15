@@ -1,14 +1,16 @@
-const Discord = require('discord.js')
-const config = require('./config.json')
+import * as Discord from 'discord.js';
+import * as config from './config.json';
 const client = new Discord.Client();
 
 client.once('ready', () => {
     console.log('bot is running');
 });
 
-client.on('message', message => {
+client.on('message', (message : Discord.Message) : void => {
     if (message.author.bot) return;
-    const content = message.content;
+
+    const content: string = message.content;
+
     if (content === 'ping') {
         message.channel.send('pong');
     } else if (content === 'pong') {
