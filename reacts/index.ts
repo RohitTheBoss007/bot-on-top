@@ -3,7 +3,7 @@ import { Message } from 'discord.js';
 export const reactMessage = (message: Message) : void => {
     const content: string = message.content.toLowerCase();
 
-    if (content.search('catthink') !== -1) {
+    if (content.search(':catthink:') !== -1) {
         message.react('701386574251950141');
     }
 
