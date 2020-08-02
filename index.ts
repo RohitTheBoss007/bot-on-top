@@ -1,8 +1,11 @@
-import { Client, Message } from 'discord.js';
+import { Client, Message, PartialMessage } from 'discord.js';
 import * as config from './config.json';
 import { reactMessage } from './reacts';
+import * as snipe from './snipe'
 
 const client = new Client();
+
+type DiscordMessage = Message | PartialMessage
 
 client.once('ready', () => {
     console.log('bot is running');
@@ -28,7 +31,23 @@ client.on('message', (message : Message) : void => {
         }
     }
 
+    if (content.startsWith('!snipe')) {
+        message.channel.send(snipe.getDeleted())
+    }
+
+    if (content.startsWith('!esnipe')) {
+        message.channel.send(snipe.getEdit())
+    }
+
     reactMessage(message);
 });
+
+client.on('messageUpdate', (oldMessage : DiscordMessage, newMessage : DiscordMessage) : void => {
+    snipe.recordEdit(oldMessage as Message)
+});
+
+client.on('messageDelete', (oldMessage : DiscordMessage) : void => {
+    snipe.recordDelete(oldMessage as Message)
+})
 
 client.login(config.token);
