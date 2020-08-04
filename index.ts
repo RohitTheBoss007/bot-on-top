@@ -5,7 +5,7 @@ import * as snipe from './snipe'
 
 const client = new Client();
 
-type DiscordMessage = Message | PartialMessage
+type DiscordMessage = Message | PartialMessage;
 
 client.once('ready', () => {
     console.log('bot is running');
@@ -32,22 +32,32 @@ client.on('message', (message : Message) : void => {
     }
 
     if (content.startsWith('!snipe')) {
-        message.channel.send(snipe.getDeleted())
+        const embed = snipe.getDeleted();
+        if (embed) {
+            message.channel.send(embed);
+        }
     }
 
     if (content.startsWith('!esnipe')) {
-        message.channel.send(snipe.getEdit())
+        const embed = snipe.getEdit();
+        if (embed) {
+            message.channel.send(embed);
+        }
     }
 
     reactMessage(message);
 });
 
 client.on('messageUpdate', (oldMessage : DiscordMessage, newMessage : DiscordMessage) : void => {
-    snipe.recordEdit(oldMessage as Message)
+    const message : Message = oldMessage as Message;
+    if (message.author.bot) return;
+    snipe.recordEdit(message);
 });
 
 client.on('messageDelete', (oldMessage : DiscordMessage) : void => {
-    snipe.recordDelete(oldMessage as Message)
+    const message : Message = oldMessage as Message;
+    if (message.author.bot) return;
+    snipe.recordDelete(message);
 })
 
 client.login(config.token);
