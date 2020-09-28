@@ -14,4 +14,8 @@ export const reactMessage = (message: Message) : void => {
     if (content.search('orz') !== -1) {
         message.react('692402194053333000');
     }
+    
+    if (content.search('69') !== -1) {
+        message.react('760039320550768650');
+    }
 }
