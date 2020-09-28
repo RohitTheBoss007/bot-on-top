@@ -1,12 +1,17 @@
-import * as Discord from 'discord.js';
+import { Client, Message, PartialMessage } from 'discord.js';
 import * as config from './config.json';
-const client = new Discord.Client();
+import { reactMessage } from './reacts';
+import * as snipe from './snipe'
+
+const client = new Client();
+
+type DiscordMessage = Message | PartialMessage;
 
 client.once('ready', () => {
     console.log('bot is running');
 });
 
-client.on('message', (message : Discord.Message) : void => {
+client.on('message', (message : Message) : void => {
     if (message.author.bot) return;
 
     const content: string = message.content;
@@ -26,9 +31,33 @@ client.on('message', (message : Discord.Message) : void => {
         }
     }
 
-    if (content.toLowerCase().search('catthink') !== -1) {
-        message.channel.send('<:catthink:701386574251950141>');
+    if (content.startsWith('!snipe')) {
+        const embed = snipe.getDeleted();
+        if (embed) {
+            message.channel.send(embed);
+        }
     }
+
+    if (content.startsWith('!esnipe')) {
+        const embed = snipe.getEdit();
+        if (embed) {
+            message.channel.send(embed);
+        }
+    }
+
+    reactMessage(message);
 });
+
+client.on('messageUpdate', (oldMessage : DiscordMessage, newMessage : DiscordMessage) : void => {
+    const message : Message = oldMessage as Message;
+    if (message.author.bot) return;
+    snipe.recordEdit(message);
+});
+
+client.on('messageDelete', (oldMessage : DiscordMessage) : void => {
+    const message : Message = oldMessage as Message;
+    if (message.author.bot) return;
+    snipe.recordDelete(message);
+})
 
 client.login(config.token);
